@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ethereum.fullname" . }}-bootnode-registrar-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ template "ethereum.name" . }}-bootnode-registrar-deployment
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  replicas: {{ .Values.bootnodeRegistrar.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "ethereum.name" . }}-bootnode-registrar
+  template:
+    metadata:
+      labels:
+        app: {{ template "ethereum.name" . }}-bootnode-registrar
+    spec:
+      containers:
+      - name: bootnode-registrar
+        image: {{ .Values.bootnodeRegistrar.image.repository }}:{{ .Values.bootnodeRegistrar.image.tag }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+        - name: BOOTNODE_SERVICE
+          value: {{ template "ethereum.fullname" . }}-bootnode-service.{{ .Values.namespace }}.svc.cluster.local
+        ports:
+        - containerPort: 9898

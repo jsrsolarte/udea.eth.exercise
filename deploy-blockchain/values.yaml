@@ -1,0 +1,42 @@
+namespace: ns-bchain-eth
+imagePullPolicy: IfNotPresent
+
+bootnode:
+  replicaCount: 2
+  image:
+    repository: ethereum/client-go
+    tag: alltools-release-1.8
+
+bootnodeRegistrar:
+  replicaCount: 1
+  image:
+    repository: jpoon/bootnode-registrar
+    tag: v1.0.0
+
+ethstats:
+  replicaCount: 1
+  image:
+    repository: ethereumex/eth-stats-dashboard
+    tag: latest
+  webSocketSecret: 3th3r91
+  service:
+    type: ClusterIP
+
+geth:
+  image:
+    repository: ethereum/client-go
+    tag: release-1.8
+  tx:
+    # transaction nodes
+    replicaCount: 2
+    service:
+      type: ClusterIP
+  miner:
+    # miner nodes
+    replicaCount: 3
+    account:
+      secret: 3th3r91
+  genesis:
+    networkId: 910408
+    accountsToFund:
+      - 44060ad1fcc0729962c822c13a90907dedfe03db

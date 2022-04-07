@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ethereum.fullname" . }}-ethstats-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ template "ethereum.name" . }}-ethstats-deployment
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  replicas: {{ .Values.ethstats.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "ethereum.name" . }}-ethstats
+  template:
+    metadata:
+      labels:
+        app: {{ template "ethereum.name" . }}-ethstats
+    spec:
+      containers:
+      - name: ethstats
+        image: {{ .Values.ethstats.image.repository }}:{{ .Values.ethstats.image.tag }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: 3000
+        env:
+        - name: WS_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "ethereum.fullname" . }}-ethstats-secret
+              key: WS_SECRET

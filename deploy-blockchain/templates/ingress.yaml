@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "ethereum.fullname" . }}-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+      app: {{ template "ethereum.name" . }}-ingress
+      chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "ethereum.fullname" . }}-ethstats-service
+                port:
+                  number: 80
